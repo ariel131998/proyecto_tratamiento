@@ -81,11 +81,14 @@ def k_means(df,k,n_itera):
     #------------------Inicializacion (asignaremos aleatoriamente un conjuto a cada cluster)-----------------
     
     nombres_d = ["cluster0"] #'cluster'+str(0)
+    distancia_c = [0.0] #creamos arreglo de distancias a clusters
     i=1
     while i < k:
         nombres_d.insert(i,'cluster'+str(i))
+        #distancia_c.insert(i,0.0)
         i = i+1
     print(nombres_d)#se creo los nombres para los cluster
+    print(distancia_c) #se creo distancias default
     i=1
     cluster= X.iloc[random.randrange(X.shape[0]-1)]
     clusters = {'cluster1' : cluster} #CREAMOS PRIMER ELEMENTO DEL DICCIONARIO
@@ -93,9 +96,40 @@ def k_means(df,k,n_itera):
         cluster= X.iloc[random.randrange(X.shape[0]-1)]
         clusters.setdefault(nombres_d[i],cluster)
         i = i+1
-    print(clusters)#imprimimos los cluster finales (diccionario)
-    
+    #print(clusters)
+    #print("imprimiendo valor separado")
+    #print(cluster.get("cluster0"))
+    #print(cluster[0][2])
+    #print(cluster[1][0])
+    #print(clusters["cluster0"])
+    for valores in clusters:
+        print(clusters[valores]) #imprimimos los cluster finales (diccionario)
+        #prueba = clusters[valores]
     #------------------------------Asignacion de datos a centroide mas cercano-------------------
+    #sacando distancia entre punto uno y primer cluster
+    #print("imprimiedno conjunto prueba")
+    #print(prueba)
+    #print(X.iloc[1])
+    #print(X.iloc[2])
+    #dist = np.linalg.norm(prueba-(X.iloc[1]))
+    #print(dist)
+    i = 0 #limpiamos variable
+    j = 0
+    r = 0
+    del distancia_c[:] #limpiamos lista de distancias
+    while i < n_itera: #hasta que se cumpla el numero de iteraciones 
+        while j < X.shape[0]: #hasta que asigne cada fila del conjunto a un cluster(asignación)
+            while r < k: #hasta que mida la distancia entre cada cluster
+                dist = np.linalg.norm((X.iloc[j])-(X.iloc[r]))
+                distancia_c.insert(r,dist)   #asignamos distancia calculada a cada cluster
+                r = r+1
+            #distancia_c.pop()
+            print(distancia_c)
+            #falta vaciar la lista tambien
+            del distancia_c[:]
+            j = j+1
+            r = 0
+        
 
     #actualizacion del centroide a la media aritmetica del cluster
 
