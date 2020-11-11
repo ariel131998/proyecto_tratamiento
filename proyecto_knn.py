@@ -82,6 +82,8 @@ def k_means(df,k,n_itera):
     
     nombres_d = ["cluster0"] #'cluster'+str(0)
     distancia_c = [0.0] #creamos arreglo de distancias a clusters
+    clusters_datos = np.zeros((k,X.shape[0])) #creamos arreglo que guardara agrupaciones de cluster indice representa el cluster
+    print(clusters_datos)
     i=1
     while i < k:
         nombres_d.insert(i,'cluster'+str(i))
@@ -91,20 +93,17 @@ def k_means(df,k,n_itera):
     print(distancia_c) #se creo distancias default
     i=1
     cluster= X.iloc[random.randrange(X.shape[0]-1)]
-    clusters = {'cluster1' : cluster} #CREAMOS PRIMER ELEMENTO DEL DICCIONARIO
+    clusters = {'cluster0' : cluster} #CREAMOS PRIMER ELEMENTO DEL DICCIONARIO
     while i < k:
         cluster= X.iloc[random.randrange(X.shape[0]-1)]
         clusters.setdefault(nombres_d[i],cluster)
         i = i+1
-    #print(clusters)
-    #print("imprimiendo valor separado")
-    #print(cluster.get("cluster0"))
-    #print(cluster[0][2])
-    #print(cluster[1][0])
-    #print(clusters["cluster0"])
     for valores in clusters:
         print(clusters[valores]) #imprimimos los cluster finales (diccionario)
         #prueba = clusters[valores]
+    #pruebas
+    print("checando......")
+    print(clusters.get("cluster0"))
     #------------------------------Asignacion de datos a centroide mas cercano-------------------
     #sacando distancia entre punto uno y primer cluster
     #print("imprimiedno conjunto prueba")
@@ -120,18 +119,30 @@ def k_means(df,k,n_itera):
     while i < n_itera: #hasta que se cumpla el numero de iteraciones 
         while j < X.shape[0]: #hasta que asigne cada fila del conjunto a un cluster(asignación)
             while r < k: #hasta que mida la distancia entre cada cluster
-                dist = np.linalg.norm((X.iloc[j])-(X.iloc[r]))
+                dist = np.linalg.norm((X.iloc[j])-clusters.get(nombres_d[r]))#realiza medicion entre cluster y fila
                 distancia_c.insert(r,dist)   #asignamos distancia calculada a cada cluster
                 r = r+1
-            #distancia_c.pop()
-            print(distancia_c)
-            #falta vaciar la lista tambien
-            del distancia_c[:]
+            print(distancia_c) #se imprime distancias calculadas
+            print(min(distancia_c))    #buscar la menor y asignar ese conjunto al cluster
+            print(distancia_c.index((min(distancia_c)))) #retorna indice de menor distancia
+            mascercano = distancia_c.index((min(distancia_c))) #guarda indice del cluster mas cercano
+            print("mas cercano")
+            print(mascercano)
+            print(nombres_d[mascercano])
+            #clusters[nombres_d[mascercano]].append(X.iloc[j])#no funciono
+            if j == 0 :
+                clusters_datos[mascercano][j] = 0.1
+            else: 
+                clusters_datos[mascercano][j] = j
+            del distancia_c[:] #se vacia la lista de distancias
             j = j+1
             r = 0
+        #actualizacion del centroide a la media aritmetica del cluster
         
+        i = i+1
+    print(clusters_datos)
 
-    #actualizacion del centroide a la media aritmetica del cluster
+    
 
 #-------------------------variables-----------------------------    
 f=0
