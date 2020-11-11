@@ -98,6 +98,7 @@ def k_means(df,k,n_itera):
         cluster= X.iloc[random.randrange(X.shape[0]-1)]
         clusters.setdefault(nombres_d[i],cluster)
         i = i+1
+    print("CLUSTERS INICIALES:")
     for valores in clusters:
         print(clusters[valores]) #imprimimos los cluster finales (diccionario)
         #prueba = clusters[valores]
@@ -134,12 +135,23 @@ def k_means(df,k,n_itera):
                 clusters_datos[mascercano][j] = 0.1
             else: 
                 clusters_datos[mascercano][j] = j
-            del distancia_c[:] #se vacia la lista de distancias
+            #actualizacion del centroide a la media aritmetica del cluster
+            z = 0
+            print(len(X.columns))
+            while z < len(X.columns):
+                clusters[nombres_d[mascercano]][0] = (clusters[nombres_d[mascercano]][0] + X.iloc[j][0])/2
+                z = z+1
+            #print(clusters[nombres_d[mascercano]][0])
+            #print(X.iloc[j][0])
             j = j+1
-            r = 0
-        #actualizacion del centroide a la media aritmetica del cluster
+            del distancia_c[:] #se vacia la lista de distancias
+            r = 0 #limpiamos r
         
         i = i+1
+        j=0#limpiamos j para siguiente iteracion
+    print("Clusters finales:")
+    print(clusters) #checando cluster finalesss checar-------------
+    print("Matriz que muestra que fila del conjunto de datos pertenece a cada cluster")
     print(clusters_datos)
 
     
