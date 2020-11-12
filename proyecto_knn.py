@@ -83,7 +83,7 @@ def k_means(df,k,n_itera):
     nombres_d = ["cluster0"] #'cluster'+str(0)
     distancia_c = [0.0] #creamos arreglo de distancias a clusters
     clusters_datos = np.zeros((k,X.shape[0])) #creamos arreglo que guardara agrupaciones de cluster indice representa el cluster
-    print(clusters_datos)
+    #print(clusters_datos)
     i=1
     while i < k:
         nombres_d.insert(i,'cluster'+str(i))
@@ -98,38 +98,41 @@ def k_means(df,k,n_itera):
         cluster= X.iloc[random.randrange(X.shape[0]-1)]
         clusters.setdefault(nombres_d[i],cluster)
         i = i+1
-    print("CLUSTERS INICIALES:")
+    print("CLuster Centroides INICIALES:")
     for valores in clusters:
         print(clusters[valores]) #imprimimos los cluster finales (diccionario)
-        #prueba = clusters[valores]
+        prueba = clusters[valores]
     #pruebas
-    print("checando......")
-    print(clusters.get("cluster0"))
+    #print("checando......")
+    #print(clusters.get("cluster0"))
     #------------------------------Asignacion de datos a centroide mas cercano-------------------
     #sacando distancia entre punto uno y primer cluster
     #print("imprimiedno conjunto prueba")
     #print(prueba)
     #print(X.iloc[1])
     #print(X.iloc[2])
-    #dist = np.linalg.norm(prueba-(X.iloc[1]))
+    dist = np.linalg.norm(prueba-(X.iloc[1]))#sirve para crear variable del tipo
     #print(dist)
     i = 0 #limpiamos variable
     j = 0
     r = 0
     del distancia_c[:] #limpiamos lista de distancias
-    while i < n_itera: #hasta que se cumpla el numero de iteraciones 
+    while i < n_itera: #hasta que se cumpla el numero de iteraciones (tenemos que limpiar todas las matrices)
+        #limpieza de datos para cada nueva iteración(puede que arruine todo)
+        #del distancia_c[:]
+        clusters_datos = np.zeros((k,X.shape[0]))
         while j < X.shape[0]: #hasta que asigne cada fila del conjunto a un cluster(asignación)
             while r < k: #hasta que mida la distancia entre cada cluster
                 dist = np.linalg.norm((X.iloc[j])-clusters.get(nombres_d[r]))#realiza medicion entre cluster y fila
                 distancia_c.insert(r,dist)   #asignamos distancia calculada a cada cluster
                 r = r+1
-            print(distancia_c) #se imprime distancias calculadas
-            print(min(distancia_c))    #buscar la menor y asignar ese conjunto al cluster
-            print(distancia_c.index((min(distancia_c)))) #retorna indice de menor distancia
+            #print(distancia_c) #se imprime distancias calculadas
+            #print(min(distancia_c))    #buscar la menor y asignar ese conjunto al cluster
+            #print(distancia_c.index((min(distancia_c)))) #retorna indice de menor distancia
             mascercano = distancia_c.index((min(distancia_c))) #guarda indice del cluster mas cercano
-            print("mas cercano")
-            print(mascercano)
-            print(nombres_d[mascercano])
+            #print("mas cercano")
+            #print(mascercano)
+            #print(nombres_d[mascercano])
             #clusters[nombres_d[mascercano]].append(X.iloc[j])#no funciono
             if j == 0 :
                 clusters_datos[mascercano][j] = 0.1
@@ -137,7 +140,7 @@ def k_means(df,k,n_itera):
                 clusters_datos[mascercano][j] = j
             #actualizacion del centroide a la media aritmetica del cluster
             z = 0
-            print(len(X.columns))
+            #print(len(X.columns))
             while z < len(X.columns):
                 clusters[nombres_d[mascercano]][0] = (clusters[nombres_d[mascercano]][0] + X.iloc[j][0])/2
                 z = z+1
@@ -149,12 +152,42 @@ def k_means(df,k,n_itera):
         
         i = i+1
         j=0#limpiamos j para siguiente iteracion
-    print("Clusters finales:")
+    print("CLuster Centroide finales:")
     print(clusters) #checando cluster finalesss checar-------------
-    print("Matriz que muestra que fila del conjunto de datos pertenece a cada cluster")
-    print(clusters_datos)
-
-    
+    print("Evaluación de modelo de entrenamiento")
+    i=0
+    j=0
+    #creamos varible para contar cuantos datos tiene cada cluster
+    #print(clusters_datos)
+    clusters_cant = [0]
+    del clusters_cant[:]
+    for i in range(k):
+        contador = 0
+        for j in range(X.shape[0]):
+            if clusters_datos[i][j] !=0:
+                contador = contador+1
+        clusters_cant.insert(i,contador)
+    print(clusters_datos) 
+    print("Instancias cluster")
+    i = 0   
+    for datos in clusters_cant:
+        print(nombres_d[i],datos)
+        i = i+1
+    #Asignando y comparando con Y que es el set real---------->aqui me quede 
+    clus = np.zeros((X.shape[0]))
+    i = 0 
+    j = 0
+    #print(Y[0])
+    for i in range(k):
+        for j in range(X.shape[0]):
+            if clusters_datos[i][j] ==0.1:
+                clus[Y[0]] = clus[Y[0]]+1
+            elif clusters_datos[i][j] != 0:
+                #print(Y[j])
+                arr=int(Y[j])
+                #clusters_cant[Y[j]] = clusters_cant[Y[j]]+1
+                clus[arr] = clus[arr]+1
+        print(np.argmax(clus))            
 
 #-------------------------variables-----------------------------    
 f=0
@@ -163,10 +196,12 @@ op = 1
 while f!=1:
     print("MENU");
     print("1.Calcular k-means clustering (creado) ");
-    print("2.Clacular k-nn (utilizando herramienta externa)");
+    print("2.Calcular k-nn (utilizando herramienta externa)");
     print("3.Calcular error o exactitud de los clasificadores en los puntos 1 y 2 con validación cruzada");
     print("4.Salir")
-    op = int(input("Opción:"))
+    print("opcion")
+    input()
+    op = int(input())
     if op == 1:
         print("leyendo datos")
         df=leer_datos()
@@ -180,9 +215,7 @@ while f!=1:
         df=leer_datos()
         print(df.describe())
         k = int(input("dame el valor para K: "))
-        #pedir numero de iteraciones
-        n_itera = int(input("Numero de iteraciones:"))
-        knn_implementado(df,k,n_itera)
+        knn_implementado(df,k)
     elif op == 3:
         print("implementar 3")
     elif op == 4:
