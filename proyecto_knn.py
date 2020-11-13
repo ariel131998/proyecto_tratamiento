@@ -171,24 +171,36 @@ def k_means(df,k,n_itera):
     print("Instancias cluster")
     i = 0   
     for datos in clusters_cant:
-        print(nombres_d[i],datos)
+        print(nombres_d[i],datos) #imprime numero de elementos en cada cluster 
         i = i+1
     #Asignando y comparando con Y que es el set real---------->aqui me quede 
     clus = np.zeros((X.shape[0]))
     i = 0 
     j = 0
-    #print(Y[0])
-    for i in range(k):
+    resultados = {} #creamos diccionario para guardar diccionarios
+    print(Y[0])
+    for i in range(k): #asignación de clusters o atributos 
         for j in range(X.shape[0]):
             if clusters_datos[i][j] ==0.1:
                 clus[Y[0]] = clus[Y[0]]+1
             elif clusters_datos[i][j] != 0:
-                #print(Y[j])
                 arr=int(Y[j])
-                #clusters_cant[Y[j]] = clusters_cant[Y[j]]+1
                 clus[arr] = clus[arr]+1
-        print(np.argmax(clus))            
+        resultados[nombres_d[i]] = [np.argmax(clus),max(clus)] #asiga clase del que sea mayoria
+        clus = np.zeros((X.shape[0])) #limpiamos variable
+    print(resultados) #prueba de resultados aun falta
+    #----------------hasta aqui bien-------------------------
+    #hacer for para comprobar que todas lsa clases hayan sido asignadas
 
+    #ver cuantas veces se equvico
+    i = 0
+    rest2 = 0
+    while i < k:
+       #rest = clusters_cant[i]-resultados[nombres_d[i]][1]
+       rest2 =  rest2+ (clusters_cant[i]-resultados[nombres_d[i]][1])
+       #print(nombres_d[i],rest)
+       i = i + 1
+    print("Instancias de cluster incorrectas: ",rest2)
 #-------------------------variables-----------------------------    
 f=0
 op = 1
